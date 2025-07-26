@@ -3,28 +3,6 @@ import random
 from gamestate import GameState, GameStateManager
 from combat import CombatResult, CombatManager
 
-class Character:
-    def __init__(self, name, hit_points, movement_speed, attack_damage, attack_range, initiative):
-        self.name = name
-        self.hit_points = hit_points
-        self.movement_speed = movement_speed
-        self.attack_damage = attack_damage
-        self.attack_range = attack_range
-        self.initiative = initiative
-
-    def take_damage(self, opponent_name, damage):
-        print(f"{opponent_name} attacks for {damage} damage!")
-        self.hit_points -= damage
-        print(f"{self.name} has received {damage} damage.")
-        self.print_status()
-
-        if self.hit_points <= 0:
-            raise Exception(f"{self.name} got owned! {self.name} has died.")
-        
-    def print_status(self):
-        print(f"{self.name} has {self.hit_points} remaining.\n")
-
-
 def main():
     """Main Game Loop"""
     print("Starting autobattler!")
