@@ -15,7 +15,7 @@ class CombatResult(Enum):
 # This class should handle all combat logic, including dice rolling mechanics
 class CombatManager:
 
-    def __init__(self, player, opponent, play_space_size=10, player_start_pos=4, opponent_start_pos=7):
+    def __init__(self, player, opponent, play_space_size=10, player_start_pos=3, opponent_start_pos=6):
         self.player = player
         self.opponent = opponent
         self.play_space_size = play_space_size
