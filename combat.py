@@ -15,7 +15,7 @@ class CombatResult(Enum):
 # This class should handle all combat logic, including dice rolling mechanics
 class CombatManager:
 
-    def __init__(self, player, opponent, play_space_size=12, player_start_pos=4, opponent_start_pos=7):
+    def __init__(self, player, opponent, play_space_size=10, player_start_pos=4, opponent_start_pos=7):
         self.player = player
         self.opponent = opponent
         self.play_space_size = play_space_size
@@ -34,8 +34,8 @@ class CombatManager:
     # Updates the visual representation of the play space in the console
     def update_play_space(self):
         self.play_space = [' ___ '] * self.play_space_size
-        self.play_space[self.player.position] = "You"
-        self.play_space[self.opponent.position] = "Opp"
+        self.play_space[self.player.position] = " You "
+        self.play_space[self.opponent.position] = " Opp "
 
         # Handles displaying both characters in same location index
         if self.player.position == self.opponent.position:
@@ -44,9 +44,9 @@ class CombatManager:
     # Renders the current play space onto the console
     def render_play_space(self):
         play_space_render = ''.join(self.play_space)
-        positions = ''.join([str(i % 10) for i in range(self.play_space_size)])
+        positions = '    '.join([str(i) for i in range(self.play_space_size)])
         print(f"Field:     {play_space_render}")
-        print(f"Positions: {positions}")
+        print(f"Positions:   {positions}")
         print(f"You={self.player.name}(Pos:{self.player.position}), Opp={self.opponent.name}(Pos:{self.opponent.position})")
 
     # Moves a character randomly according to their movement speed

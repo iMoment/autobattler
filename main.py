@@ -38,8 +38,8 @@ def main():
 
 # Prompts user to select a given character
 def character_select_setup():
-    stanley = Character("Stanley", 100, 20, 5, 12)
-    aaron = Character("Aaron", 140, 25, 10, 5)
+    stanley = Character("Stanley", 100, 25, 5, 3, 3, 10)
+    aaron = Character("Aaron", 120, 35, 10, 2, 2, 5)
 
     print("Choose 'Stanley' or 'Aaron' as your character.")
     character_select = input("Type 's' or 'a' to select. ")
@@ -92,8 +92,9 @@ def handle_battling_state(game_state, player, opponent):
     combat_summary = combat_manager.get_combat_summary()
     print(f"\nCombat Summary:")
     print(f"- Turns: {combat_summary['turns']}")
-    print(f"- {player.name}: {combat_summary['player_health']}/{player.max_hp} HP")
-    print(f"- {opponent.name}: {combat_summary['opponent_health']}/{opponent.max_hp} HP")
+    print(f"- {player.name}: {combat_summary['player_health']}/{player.max_hp} HP (Final position: {combat_summary['player_final_pos']})")
+    print(f"- {opponent.name}: {combat_summary['opponent_health']}/{opponent.max_hp} HP (Final position: {combat_summary['opponent_final_pos']})")
+    print(f"- Final distance between characters: {combat_summary['distance']}")
 
 # Callback function is called whenever game state changes
 def on_state_change(previous_state, current_state):
