@@ -2,13 +2,16 @@
 # in our autobattler game
 
 class Character:
-    def __init__(self, name, max_hp=100, attack_dmg=10, defense=5, initiative=10):
+    def __init__(self, name, max_hp=100, attack_dmg=10, defense=5, movement_speed=2, attack_range=1, initiative=10):
         self.name = name
         self.max_hp = max_hp
         self.current_hp = max_hp
         self.attack_dmg = attack_dmg
         self.defense = defense
         self.initiative = initiative
+        self.movement_speed = movement_speed
+        self.attack_range = attack_range
+        self.position = 0
         self.is_alive = True
 
     # Returns actual damage value after defense stat applied

@@ -15,12 +15,31 @@ class CombatResult(Enum):
 # This class should handle all combat logic, including dice rolling mechanics
 class CombatManager:
 
-    def __init__(self, player, opponent):
+    def __init__(self, player, opponent, play_space_size=12, player_start_pos=4, opponent_start_pos=7):
         self.player = player
         self.opponent = opponent
+        self.play_space_size = play_space_size
         self.turn_count = 0
-        self.round_count = 0
         self.combat_log = []
+
+        # Sets the initial position of the two characters
+        self.player.position = player_start_pos
+        self.opponent.position = opponent_start_pos
+
+        # Initialize the 2-D play space
+        self.play_space = [None] * play_space_size
+        self.update_play_space_render()
+        
+
+    # Updates the visual representation of the play space in the console
+    def update_play_space_render(self):
+        self.play_space = [' ___ '] * self.play_space_size
+        self.play_space[self.player.position] = "You"
+        self.play_space[self.opponent.position] = "Opp"
+
+        # Handles displaying both characters in same location index
+        if self.player.position == self.opponent.position:
+            self.play_space[self.player.position] = "Both"
 
     """Dice roll convenience methods"""
     # Returns a 20-sided die roll (1-20)
