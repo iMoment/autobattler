@@ -36,7 +36,7 @@ class GameStateManager:
         if new_state != self._current_state:
             self._previous_state = self._current_state
             self._current_state = new_state
-            print(f"Game state has changed: {self._previous_state.value} -> {self._current_state.value}")
+            print(f"\nGame state has changed: {self._previous_state.value} -> {self._current_state.value}")
 
             # Notify any registered callbacks
             self._notify_state_change()
