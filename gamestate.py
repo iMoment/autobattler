@@ -16,8 +16,7 @@ class GameStateManager:
     def __init__(self, initial_state=GameState.READY):
         self._current_state = initial_state
         self._previous_state = None
-
-    # Convenience methods
+        self._state_change_callbacks = []
 
     # Returns the current game state
     @property
@@ -39,7 +38,10 @@ class GameStateManager:
             self._current_state = new_state
             print(f"Game state has changed: {self._previous_state.value} -> {self._current_state.value}")
 
-    ## Convenience methods for setting state
+            # Notify any registered callbacks
+            self._notify_state_change()
+
+    """Convenience methods for setting state"""
     # Set game state to ready
     def reset_to_ready(self):
         self.set_state(GameState.READY)
@@ -52,6 +54,7 @@ class GameStateManager:
     def terminate(self):
         self.set_state(GameState.TERMINATED)
 
+    """Game state value checks"""
     # Check if the game is in a ready state
     def is_ready(self):
         return self._current_state == GameState.READY
@@ -63,6 +66,19 @@ class GameStateManager:
     # Check if the game is in a terminated state
     def is_terminated(self):
         return self._current_state == GameState.TERMINATED
+    
+    """Callback handlers on game state change if needed"""
+    # Add a callback function to be called when state changes
+    def add_state_change_callback(self, callback):
+        self._state_change_callbacks.append(callback)
+    
+    # Notifies all registered callbacks of state change
+    def _notify_state_change(self):
+        for callback in self._state_change_callbacks:
+            try:
+                callback(self._previous_state, self._current_state)
+            except Exception as e:
+                print(f"Error in state change callback: {e}")
     
     # Console output convenience
     def __str__(self):

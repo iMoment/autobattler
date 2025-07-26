@@ -31,6 +31,9 @@ def main():
     # TODO: Initialization, 2D list stage and movement not used yet
     game_state = GameStateManager(GameState.READY)
 
+    # Add callback to monitor state changes
+    game_state.add_state_change_callback(on_state_change)
+
     # Character Select
     player, opponent = character_select_setup()
 
@@ -41,7 +44,7 @@ def main():
         if game_state.is_ready():
             handle_ready_state(game_state, player, opponent)
         elif game_state.is_battling():
-            pass
+            print("Should be battling now.")
         else:
             print(f"This state is not handled: {game_state.current_state}")
             break
@@ -67,7 +70,7 @@ def character_select_setup():
 
 # Logic for handling the ready state
 def handle_ready_state(game_state, player, opponent):
-    action = input("Game is ready. Press 'b' to start battle, or 't' to terminate.")
+    action = input("Game is ready. Press 'b' to start battle, or 't' to terminate. ")
     if action == 'b':
         # 1. Determine initiative with d20 roll - See who acts 'first' in the round
         print("Determining initiative...")
@@ -84,10 +87,12 @@ def handle_ready_state(game_state, player, opponent):
         # 1. Terminate the game
         game_state.terminate()
     else:
+        # TODO: need to error handle properly
         print("user has pressed a an invalid key")
 
 # Logic for handling the battling state
 def handle_battling_state(game_state):
+    pass
     
     
     ### Start Fight ###
@@ -101,6 +106,10 @@ def handle_battling_state(game_state):
     #     if opponent_adjusted_initiative >= character_adjusted_initiative:
     #         print(f"{opponent.name} attacks first!")
     #         character_select.take_damage(opponent.name, opponent.attack_damage)
+
+# Callback function is called whenever game state changes
+def on_state_change(previous_state, current_state):
+    print(f"[STATE CHANGE] {previous_state.value if previous_state else 'None'} -> {current_state.value}")
 
 
 
