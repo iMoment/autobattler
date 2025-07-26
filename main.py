@@ -1,5 +1,6 @@
 # Our project
 import random
+from gamestate import GameState, GameStateManager
 
 class Character:
     def __init__(self, name, hit_points, movement_speed, attack_damage, attack_range, initiative):
@@ -22,60 +23,84 @@ class Character:
     def print_status(self):
         print(f"{self.name} has {self.hit_points} remaining.\n")
 
-def main():
-    # Create Battle Stage
-    battle_stage = [None] * 12
 
-    # Create two characters
+def main():
+    """Main Game Loop"""
+    print("Starting autobattler!")
+
+    # TODO: Initialization, 2D list stage and movement not used yet
+    game_state = GameStateManager(GameState.READY)
+
+    # Character Select
+    player, opponent = character_select_setup()
+
+    while not game_state.is_terminated():
+        print(f"Current state: {game_state.current_state.value}")
+
+        # TODO: Handle different game states
+        if game_state.is_ready():
+            handle_ready_state(game_state, player, opponent)
+        elif game_state.is_battling():
+            pass
+        else:
+            print(f"This state is not handled: {game_state.current_state}")
+            break
+
+    """Main Game Loop Has Ended"""
+    if game_state.is_terminated():
+        print("Another one bites the dust...")
+
+# Prompts user to select a given character
+def character_select_setup():
     stanley = Character("Stanley", 100, 3, 10, 3, 10)
     aaron = Character("Aaron", 140, 2, 15, 2, 7)
 
-    # Main game loop
-    # Character Select
-    print("Starting autobattler!")
     print("Choose 'Stanley' or 'Aaron' as your character.")
     character_select = input("Type 's' or 'a' to select. ")
-    opponent = None
+
     if character_select == 's':
-        character_select = stanley
-        opponent = aaron
+        print(f"You have selected {stanley.name}. Your opponent is {aaron.name}.\n")
+        return stanley, aaron
     else:
-        character_select = aaron
-        opponent = stanley
+        print(f"You have selected {aaron.name}. Your opponent is {stanley.name}.\n")
+        return aaron, stanley
 
-    print(f"You have selected {character_select.name}. Your opponent is {opponent.name}.\n")
-
-    # Prepare battle stage with character
-    #                          me                opp
-    # |___| |___| |___| |___| |___| |___| |___| |___| |___| |___| |___| |___| 
-    #   0     1.    2.    3.    4.    5.    6.    7.    8.    9.   10.   11
-
-    battle_stage[4] = character_select
-    battle_stage[7] = opponent
-
-    ### Start Fight ###
-    while True:
-        # 1. Determine initiative - See who acts 'first' in the round
+# Logic for handling the ready state
+def handle_ready_state(game_state, player, opponent):
+    action = input("Game is ready. Press 'b' to start battle, or 't' to terminate.")
+    if action == 'b':
+        # 1. Determine initiative with d20 roll - See who acts 'first' in the round
         print("Determining initiative...")
-        character_d20_roll = random.randint(1, 20)
+        player_d20_roll = random.randint(1, 20)
         opponent_d20_roll = random.randint(1, 20)
-        character_adjusted_initiative = character_select.initiative + character_d20_roll
+        player_adjusted_initiative = player.initiative + player_d20_roll
         opponent_adjusted_initiative = opponent.initiative + opponent_d20_roll
-        print(f"{character_select.name} rolled a {character_d20_roll}. Initiative score of {character_adjusted_initiative}.")
-        print(f"{opponent.name} rolled a {opponent_d20_roll}. Initiative score of {opponent_adjusted_initiative}.")
+        print(f"{player.name} rolled a {player_d20_roll}. Initiative score of {player_adjusted_initiative}.")
+        print(f"{opponent.name} rolled a {opponent_d20_roll}. Initiative scorec of {opponent_adjusted_initiative}.")
 
-        # 2. Attack logic first, then incorporate movement
-        # bug_fix: need to incorporate concurrency issue if initiative is tied
-        if character_adjusted_initiative >= opponent_adjusted_initiative:
-            print(f"{character_select.name} attacks first!")
-            opponent.take_damage(character_select.name, character_select.attack_damage)
-        if opponent_adjusted_initiative >= character_adjusted_initiative:
-            print(f"{opponent.name} attacks first!")
-            character_select.take_damage(opponent.name, opponent.attack_damage)
+        # 2. Start battling
+        game_state.start_battle()
+    elif action == 't':
+        # 1. Terminate the game
+        game_state.terminate()
+    else:
+        print("user has pressed a an invalid key")
 
-
+# Logic for handling the battling state
+def handle_battling_state(game_state):
     
+    
+    ### Start Fight ###
+    # while True:
 
+    #     # 2. Attack logic first, then incorporate movement
+    #     # bug_fix: need to incorporate concurrency issue if initiative is tied
+    #     if character_adjusted_initiative >= opponent_adjusted_initiative:
+    #         print(f"{character_select.name} attacks first!")
+    #         opponent.take_damage(character_select.name, character_select.attack_damage)
+    #     if opponent_adjusted_initiative >= character_adjusted_initiative:
+    #         print(f"{opponent.name} attacks first!")
+    #         character_select.take_damage(opponent.name, opponent.attack_damage)
 
 
 
