@@ -1,6 +1,7 @@
 # Our project
 import random
 from gamestate import GameState, GameStateManager
+from combat import CombatResult, CombatManager
 
 class Character:
     def __init__(self, name, hit_points, movement_speed, attack_damage, attack_range, initiative):
@@ -35,6 +36,8 @@ def main():
     game_state.add_state_change_callback(on_state_change)
 
     # Character Select
+    # TODO: needs logic for player character class selection amongst available
+    # hard-coded opponent for now, match-making selection with later implementation
     player, opponent = character_select_setup()
 
     while not game_state.is_terminated():
@@ -42,11 +45,11 @@ def main():
 
         # TODO: Handle different game states
         if game_state.is_ready():
-            handle_ready_state(game_state, player, opponent)
+            handle_ready_state(game_state)
         elif game_state.is_battling():
-            print("Should be battling now.")
+            handle_battling_state(game_state, player, opponent)
         else:
-            print(f"This state is not handled: {game_state.current_state}")
+            print(f"Unhandled state: {game_state.current_state}")
             break
 
     """Main Game Loop Has Ended"""
@@ -69,30 +72,35 @@ def character_select_setup():
         return aaron, stanley
 
 # Logic for handling the ready state
-def handle_ready_state(game_state, player, opponent):
-    action = input("Game is ready. Press 'b' to start battle, or 't' to terminate. ")
-    if action == 'b':
+def handle_ready_state(game_state):
+    while game_state.is_ready():
+        # TODO: Any pre-battling calculations should be done here eventually (healing, leveling up, etc)
+
+        action = input("Game is ready. Press 'b' to start battle, or 't' to terminate. ")
+        if action == 'b':
+            # Start battling
+            game_state.start_battle()
+        elif action == 't':
+            # Terminate the game
+            game_state.terminate()
+        else:
+            print(f"'{action}' is an invalid selection. Please select from the given options below: \n")
+
+# Logic for handling the battling state, using combat manager
+def handle_battling_state(game_state, player, opponent):
+        print("Battle in progress...")
+
+        # Initialize combat manager
+        combat_manager = CombatManager(player, opponent)
+
         # 1. Determine initiative with d20 roll - See who acts 'first' in the round
         print("Determining initiative...")
-        player_d20_roll = random.randint(1, 20)
-        opponent_d20_roll = random.randint(1, 20)
-        player_adjusted_initiative = player.initiative + player_d20_roll
-        opponent_adjusted_initiative = opponent.initiative + opponent_d20_roll
-        print(f"{player.name} rolled a {player_d20_roll}. Initiative score of {player_adjusted_initiative}.")
-        print(f"{opponent.name} rolled a {opponent_d20_roll}. Initiative scorec of {opponent_adjusted_initiative}.")
+        player_adjusted_initiative, player_dice_roll = combat_manager.roll_initiative(player.initiative)
+        opponent_adjusted_initiative, opponent_dice_roll = combat_manager.roll_initiative(opponent.initiative)
+        print(f"{player.name} rolled a {player_dice_roll}. Initiative score of {player_adjusted_initiative}.")
+        print(f"{opponent.name} rolled a {opponent_dice_roll}. Initiative scorec of {opponent_adjusted_initiative}.")
 
-        # 2. Start battling
-        game_state.start_battle()
-    elif action == 't':
-        # 1. Terminate the game
-        game_state.terminate()
-    else:
-        # TODO: need to error handle properly
-        print("user has pressed a an invalid key")
-
-# Logic for handling the battling state
-def handle_battling_state(game_state):
-    pass
+        # 2. 
     
     
     ### Start Fight ###
