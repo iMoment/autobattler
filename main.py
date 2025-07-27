@@ -123,7 +123,7 @@ def handle_battling_state(game_state, player, opponent):
         # modifiers applied if additional game loops
         game_state.reset_to_ready()
     elif combat_result == CombatResult.OPPONENT_VICTORY:
-        print(f"\n Defeat! {opponent.name} has defeated {player.name}!")
+        print(f"\nDefeat! {opponent.name} has defeated {player.name}!")
         print("Game Over Loser!")
         game_state.terminate()
     elif combat_result == CombatResult.DRAW:
