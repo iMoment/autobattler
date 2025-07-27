@@ -33,3 +33,57 @@ class Character:
     # Console output convenience
     def __str__(self):
         return f"{self.name}: {self.current_hp}/{self.max_hp} HP"
+    
+# Tank Subclass
+# Should focus on high health and defense, low values for movement and range
+class Tank(Character):
+    def __init__(self, name="Tank"):
+        super().__init__(
+            name = name,
+            max_hp = 150,
+            attack_dmg = 15,
+            defense = 12,
+            movement_speed = 1,
+            attack_range = 1,
+            initiative = 8,
+        )
+
+    @classmethod
+    def description(cls):
+        return "An absolute beast that can absorb hits, but moves like your standard Richmond local."
+    
+# Assassin Subclass
+# Should focus on high movement and attack, low values for health and defense
+class Assassin(Character):
+    def __init__(self, name="Assasssin"):
+        super().__init__(
+            name = name,
+            max_hp = 70,
+            attack_dmg = 25,
+            defense = 3,
+            movement_speed = 4,
+            attack_range = 1,
+            initiative = 12,
+        )
+    
+    @classmethod
+    def description(cls):
+        return "A nimble but power fighter, that's faster than how long I last in the bedroom."
+    
+# Warrior Subclass
+# Should be balanced relative to the other two subclasses above
+class Warrior(Character):
+    def __init__(self, name="Warrior"):
+        super().__init__(
+            name = name,
+            max_hp = 100,
+            attack_dmg = 18,
+            defense = 8,
+            movement_speed = 3,
+            attack_range = 2,
+            initiative = 10,
+        )
+    
+    @classmethod
+    def description(cls):
+        return "A nimble but power fighter, that's faster than how long I last in the bedroom."
