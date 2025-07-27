@@ -15,7 +15,7 @@ class CombatResult(Enum):
 # This class should handle all combat logic, including dice rolling mechanics
 class CombatManager:
 
-    def __init__(self, player, opponent, play_space_size=10, player_start_pos=3, opponent_start_pos=6):
+    def __init__(self, player, opponent, play_space_size=8, player_start_pos=2, opponent_start_pos=5):
         self.player = player
         self.opponent = opponent
         self.play_space_size = play_space_size
@@ -50,7 +50,7 @@ class CombatManager:
         print(f"You={self.player.name}(Pos:{self.player.position}), Opp={self.opponent.name}(Pos:{self.opponent.position})")
 
     # Moves a character randomly according to their movement speed
-    def move_character(self, character):
+    def move_character(self, character, is_opponent=False):
         if not character.is_alive:
             return
         
@@ -75,7 +75,10 @@ class CombatManager:
         direction_str = "left" if direction == -1 else "right"
         actual_distance = abs(new_position - old_position)
 
-        movement_log = f"{character.name} moves {direction_str} {actual_distance} spaces (from {old_position} to {new_position})"
+        if is_opponent:
+            movement_log = f"Opponent moves {direction_str} {actual_distance} space(s) (from {old_position} to {new_position})"
+        else:
+            movement_log = f"You move {direction_str} {actual_distance} space(s) (from {old_position} to {new_position})"
         print(movement_log)
         self.combat_log.append(movement_log)
 
@@ -136,7 +139,7 @@ class CombatManager:
         if self.player.is_alive:
             self.move_character(self.player)
         if self.opponent.is_alive:
-            self.move_character(self.opponent)
+            self.move_character(self.opponent, True)
 
         # Update play space render after this movement
         self.update_play_space()
@@ -153,8 +156,10 @@ class CombatManager:
 
         if self.player.is_alive and player_adjusted_initiative >= opponent_adjusted_initiative:
             self.perform_attack(self.player, self.opponent)
+            self.perform_attack(self.opponent, self.player)
         elif self.opponent.is_alive and opponent_adjusted_initiative > player_adjusted_initiative:
             self.perform_attack(self.opponent, self.player)
+            self.perform_attack(self.player, self.opponent)
 
         # Update play space render after combat occurs
         self.update_play_space()

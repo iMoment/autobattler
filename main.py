@@ -1,25 +1,23 @@
 # Our autobattler project
 from gamestate import GameState, GameStateManager
 from combat import CombatResult, CombatManager
-from character import Character
+from character import Character, Tank, Assassin, Warrior
+
 
 def main():
     # MAIN_GAME_LOOP
     print("Starting autobattler!")
 
-    # TODO: Initialization, 2D list stage and movement not used yet
-    game_state = GameStateManager(GameState.READY)
+    display_character_classes()
+    character_class = get_user_class_selection()
+    player = create_character(character_class)
+    opponent = create_character(Warrior, True)
 
-    # Add callback to monitor state changes
+    game_state = GameStateManager(GameState.READY)
     game_state.add_state_change_callback(on_state_change)
 
     # Main game loop turn count limit
     # TODO: May be used to 'continue' string of battles with different opponents sequentially
-
-    # Character Select
-    # TODO: needs logic for player character class selection amongst available
-    # hard-coded opponent for now, match-making selection with later implementation
-    player, opponent = character_select_setup()
 
     while not game_state.is_terminated():
         print(f"Current state: {game_state.current_state.value}")
@@ -36,20 +34,63 @@ def main():
     if game_state.is_terminated():
         print("\n<=== GAME HAS BEEN TERMINATED ===>")
 
-# Prompts user to select a given character
-def character_select_setup():
-    stanley = Character("Stanley", 100, 25, 5, 3, 3, 10)
-    aaron = Character("Aaron", 120, 35, 10, 2, 2, 5)
+# Convenience function for getting available character classes
+def get_character_classes():
+    return {
+        "Tank": Tank,
+        "Assassin": Assassin,
+        "Warrior": Warrior,
+    }
 
-    print("Choose 'Stanley' or 'Aaron' as your character.")
-    character_select = input("Type 's' or 'a' to select. ")
+# Displays in the console available character classes a user can select to represent themselves
+def display_character_classes():
+    print("\n<=== CHARACTER CLASS SELECTION ===>")
+    print("Choose your character class:\n")
 
-    if character_select == 's':
-        print(f"You have selected {stanley.name}. Your opponent is {aaron.name}.\n")
-        return stanley, aaron
+    classes = get_character_classes()
+
+    for index, (key, class_type) in enumerate(classes.items(), 1):
+        # Need temp instance for displaying stats
+        temp = class_type()
+
+        print(f"{index}. {key}")
+        print(f"   {class_type.description()}")
+        print(f"   Health: {temp.max_hp}, Attack: {temp.attack_dmg}, Defense: {temp.defense}")
+        print(f"   Movement: {temp.movement_speed}, Range: {temp.attack_range}\n")
+
+# Get the user's character class selection
+def get_user_class_selection():
+    classes = get_character_classes()
+    class_list = list(classes.keys())
+
+    # Main selection loop
+    while True:
+        try:
+            user_selection = input("Enter your selection (1-3): ").strip()
+            selected = int(user_selection)
+
+            if 1 <= selected <= len(class_list):
+                selected_class_key = class_list[selected - 1]
+                selected_class = classes[selected_class_key]
+                print(f"\nYou have selected: {selected_class_key}")
+                return selected_class
+            else:
+                print(f"Please enter a valid selection number.")
+        except ValueError:
+            print("Please enter a valid selection number.")
+
+# Creates an instance of a character class
+def create_character(character_class, is_opponent=False):
+    if character_class is None:
+        return None
+    
+    character = character_class()
+
+    if is_opponent:
+        print(f"Your opponent is a/an: {character}\n")
     else:
-        print(f"You have selected {aaron.name}. Your opponent is {stanley.name}.\n")
-        return aaron, stanley
+        print(f"Character created: {character}\n")
+    return character
 
 # Logic for handling the ready state
 def handle_ready_state(game_state):

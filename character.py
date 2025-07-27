@@ -44,7 +44,7 @@ class Tank(Character):
             attack_dmg = 15,
             defense = 12,
             movement_speed = 1,
-            attack_range = 1,
+            attack_range = 2,
             initiative = 8,
         )
 
@@ -62,7 +62,7 @@ class Assassin(Character):
             attack_dmg = 25,
             defense = 3,
             movement_speed = 4,
-            attack_range = 1,
+            attack_range = 2,
             initiative = 12,
         )
     
@@ -80,10 +80,10 @@ class Warrior(Character):
             attack_dmg = 18,
             defense = 8,
             movement_speed = 3,
-            attack_range = 2,
+            attack_range = 3,
             initiative = 10,
         )
     
     @classmethod
     def description(cls):
-        return "A nimble but power fighter, that's faster than how long I last in the bedroom."
+        return "A well-balanced fighter, that's mediocre at everything, like the twitch streamer BreakfastPills."
