@@ -3,7 +3,7 @@ import random
 from gamestate import GameState, GameStateManager
 from combat import CombatResult, CombatManager
 from character import Character, Tank, Assassin, Warrior
-
+from score import Score
 
 def main():
     # MAIN_GAME_LOOP
@@ -15,6 +15,7 @@ def main():
 
     game_state = GameStateManager(GameState.READY)
     game_state.add_state_change_callback(on_state_change)
+    score = Score()
 
     # Main game loop turn count limit
     # TODO: May be used to 'continue' string of battles with different opponents sequentially
@@ -25,14 +26,14 @@ def main():
         if game_state.is_ready():
             handle_ready_state(game_state)
         elif game_state.is_battling():
-            handle_battling_state(game_state, player, opponent)
+            handle_battling_state(game_state, player, opponent, score)
         else:
             print(f"Unhandled state: {game_state.current_state}")
             break
 
     # MAIN_GAME_LOOP_HAS_ENDED
     if game_state.is_terminated():
-        print("\n<=== GAME HAS BEEN TERMINATED ===>")
+        print(f"\n<=== GAME HAS BEEN TERMINATED ===>")
 
 # Convenience function for getting available character classes
 def get_character_classes():
@@ -108,7 +109,7 @@ def handle_ready_state(game_state):
             print(f"'{action}' is an invalid selection. Please select from the given options below: \n")
 
 # Logic for handling the battling state, using combat manager
-def handle_battling_state(game_state, player, opponent):
+def handle_battling_state(game_state, player, opponent, score):
     print("Battle in progress...")
 
     # Initialize combat manager
@@ -120,14 +121,17 @@ def handle_battling_state(game_state, player, opponent):
     # Handle combat results and change game state if needed
     if combat_result == CombatResult.PLAYER_VICTORY:
         print(f"\nVictory! {player.name} defeated {opponent.name}!")
+        print(f"{score.increase_player_score()}\n{score.get_score()}")
         # modifiers applied if additional game loops
         game_state.reset_to_ready()
     elif combat_result == CombatResult.OPPONENT_VICTORY:
         print(f"\nDefeat! {opponent.name} has defeated {player.name}!")
+        print(f"{score.increase_computer_score()} \n{score.get_score()}")
         print("Game Over Loser!")
         game_state.terminate()
     elif combat_result == CombatResult.DRAW:
         print(f"\nDraw! Both fighters are equally matched!")
+        print(f"{score.get_score()}")
         print("Game Over!")
         game_state.terminate()
     
@@ -145,3 +149,4 @@ def on_state_change(previous_state, current_state):
 
 if __name__ == "__main__":
     main()
+    
