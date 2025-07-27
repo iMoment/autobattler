@@ -118,9 +118,9 @@ class CombatManager:
             self.combat_log.append(log_entry)
             return 0
 
-        actual_damage = defender.take_damage(attacker.attack_dmg)
+        actual_damage, defense_roll = defender.take_damage(attacker.attack_dmg)
 
-        log_entry = f"{attacker.name} attacks {defender.name}! Damage: {attacker.attack_dmg}, Defender defense: {defender.defense}, Actual damage: {actual_damage}"
+        log_entry = f"{attacker.name} attacks {defender.name}! Damage: {attacker.attack_dmg}, Defense roll: {defense_roll}, Actual damage: {actual_damage}"
         print(log_entry)
         self.combat_log.append(log_entry)
 

@@ -1,5 +1,6 @@
 # Character class which represents a single participant
 # in our autobattler game
+import random
 
 class Character:
     def __init__(self, name, max_hp=100, attack_dmg=10, defense=5, movement_speed=2, attack_range=1, initiative=10):
@@ -16,14 +17,15 @@ class Character:
 
     # Returns actual damage value after defense stat applied
     def take_damage(self, damage):
-        actual_damage = max(0, damage - self.defense)
+        defense_roll = random.randint(0, self.defense)
+        actual_damage = max(0, damage - defense_roll)
         self.current_hp = max(0, self.current_hp - actual_damage)
 
         if self.current_hp <= 0:
             self.is_alive = False
             print(f"{self.name} has been defeated!")
 
-        return actual_damage
+        return actual_damage, defense_roll
     
     """Convenience Methods"""
     # Returns current_hp as a percentage

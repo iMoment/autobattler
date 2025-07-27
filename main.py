@@ -1,4 +1,5 @@
 # Our autobattler project
+import random
 from gamestate import GameState, GameStateManager
 from combat import CombatResult, CombatManager
 from character import Character, Tank, Assassin, Warrior
@@ -10,8 +11,7 @@ def main():
 
     display_character_classes()
     character_class = get_user_class_selection()
-    player = create_character(character_class)
-    opponent = create_character(Warrior, True)
+    player, opponent = create_characters(character_class)
 
     game_state = GameStateManager(GameState.READY)
     game_state.add_state_change_callback(on_state_change)
@@ -80,17 +80,19 @@ def get_user_class_selection():
             print("Please enter a valid selection number.")
 
 # Creates an instance of a character class
-def create_character(character_class, is_opponent=False):
+def create_characters(character_class):
     if character_class is None:
         return None
     
-    character = character_class()
-
-    if is_opponent:
-        print(f"Your opponent is a/an: {character}\n")
-    else:
-        print(f"Character created: {character}\n")
-    return character
+    available_classes = [Tank, Assassin, Warrior]
+    player_character = character_class()
+    available_classes.remove(character_class)
+    opponent_character = random.choice(available_classes)()
+    
+    print(f"Character created: {player_character}")
+    print(f"Your opponent is a/an: {opponent_character}\n")
+        
+    return player_character, opponent_character
 
 # Logic for handling the ready state
 def handle_ready_state(game_state):
@@ -125,7 +127,7 @@ def handle_battling_state(game_state, player, opponent):
         print("Game Over Loser!")
         game_state.terminate()
     elif combat_result == CombatResult.DRAW:
-        print(f"\n Draw! Both fighters are equally matched!")
+        print(f"\nDraw! Both fighters are equally matched!")
         print("Game Over!")
         game_state.terminate()
     
@@ -135,7 +137,7 @@ def handle_battling_state(game_state, player, opponent):
     print(f"- Turns: {combat_summary['turns']}")
     print(f"- {player.name}: {combat_summary['player_health']}/{player.max_hp} HP (Final position: {combat_summary['player_final_pos']})")
     print(f"- {opponent.name}: {combat_summary['opponent_health']}/{opponent.max_hp} HP (Final position: {combat_summary['opponent_final_pos']})")
-    print(f"- Final distance between characters: {combat_summary['distance']}")
+    print(f"- Final distance between characters: {combat_summary['distance']}\n")
 
 # Callback function is called whenever game state changes
 def on_state_change(previous_state, current_state):
